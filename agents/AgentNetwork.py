@@ -7,7 +7,10 @@ class AgentNetwork(AgentGroup):
     def __init__(self, size, assimilation, network_type: str):
         super().__init__(size, assimilation)
         self.network_type = network_type
-        match network_type:
+        self.adjacency_matrix = nx.to_numpy_matrix(self.get_network())
+
+    def get_network(self):
+        match self.network_type:
             case "random_graph":
                 G = nx.G = nx.erdos_renyi_graph(self.size, 0.5, seed=123, directed=False).to_undirected()
             case "fully_connected":
@@ -16,8 +19,8 @@ class AgentNetwork(AgentGroup):
                 G = nx.scale_free_graph(self.size).to_undirected()
             case _:
                 G = nx.scale_free_graph(self.size).to_undirected()
-        self.adjacency_matrix = nx.to_numpy_matrix(G)
-
+        return G
+        
     def get_observed_agent(self, agent):
         adjacent_agents = self.adjacency_matrix[agent].nonzero()[1]
         observed_agent = np.random.choice(adjacent_agents)
@@ -40,3 +43,9 @@ class AgentNetwork(AgentGroup):
                     not_linked = np.where(self.adjacency_matrix[i] == 0)[1]
                     new_link = np.random.choice(not_linked)
                     self.adjacency_matrix[i, new_link] = 1
+
+    def reset(self):
+        self.set_beliefs_to_initial()
+        self.adjacency_matrix = nx.to_numpy_matrix(self.get_network())
+
+        

@@ -8,12 +8,12 @@ granular = np.array([(0.01*j-2) for j in range(granularity)])
 
 def normalize(a):
     norm = sum(a)
-    return [x/norm for x in a]
+    return a * (granularity - 1)/(4*norm)
 
 def multiply(a,b):
     return np.array(normalize(np.multiply(a,b)))
 
-def gaussian(mean, standard_deviation, granularity):
+def gaussian(mean, standard_deviation):
     dist = np.array([exp(-1*(x-mean)**2/(2*(standard_deviation)**2)) for x in granular])
     return normalize(dist)
 

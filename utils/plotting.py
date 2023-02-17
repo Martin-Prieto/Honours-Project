@@ -1,8 +1,9 @@
+from utils.summaries import *
 from matplotlib import pyplot as plt
 import numpy as np
 from scipy.stats import norm
-from utils.summaries import get_belief_histogram, number_of_opinions_summary, number_of_opinions_summary_with_bias
 import seaborn as sns
+from utils.computations.vectorised import vector_gaussian, steps, normalize
 
 def plot_belief_evolution(belief_means):
     plt.xscale("log")
@@ -41,18 +42,18 @@ def plot_desity_of_opinions(belief_means, resolution=100):
     plt.yticks([0, resolution/2, resolution], [1, 0, -1])
     plt.colorbar()
 
-def plot_final_belief_histogram(beliefs_mean, resolution=500):
+def plot_final_belief_histogram(beliefs_mean, resolution=200):
     hist = get_belief_histogram(beliefs_mean, resolution)
     plt.plot(hist)
     plt.xticks([0, len(hist)/2, len(hist)], [-1, 0, 1])
 
-def plot_number_of_opinions_summary(simulator, agent_network, sigmas, bounded_confidences):
-    heat_map = number_of_opinions_summary(simulator, agent_network, sigmas, bounded_confidences)
-    ax = sns.heatmap(heat_map, xticklabels=sigmas, yticklabels=bounded_confidences)
+def plot_number_of_opinions_summary(simulator, agent_network, interactions, param_iterator_x, param_iterator_y, param_x, param_y):
+    heat_map = number_of_opinions_summary(simulator, agent_network, interactions, param_iterator_x, param_iterator_y, param_x, param_y)
+    ax = sns.heatmap(heat_map, xticklabels=param_iterator_x, yticklabels=param_iterator_y)
     ax.invert_yaxis()
     plt.title('Number of final opinions', fontsize = 17)
-    plt.xlabel('Agent\'s uncertainty', fontsize = 15)
-    plt.ylabel('Bounded Confidence Parameter', fontsize = 15)
+    plt.xlabel(param_x, fontsize = 15)
+    plt.ylabel(param_y, fontsize = 15)
 
 def plot_number_of_opinions_summary_with_bias(simulator, agent_network, confirmation_biases, bounded_confidences):
     heat_map = number_of_opinions_summary_with_bias(simulator, agent_network, confirmation_biases, bounded_confidences)
@@ -80,6 +81,20 @@ def plot_dynamics_sumary(beliefs_means):
     plt.xlabel('Opinion', fontsize = 15)
     plt.title("Final opinion distribution")
     plt.show()
+
+def plot_beliefs_kernel_density(belief_evolution, kernel_bandwidth):
+    belief_kernel_density = get_belief_kernel_density(belief_evolution, kernel_bandwidth)
+    plt.plot(steps, belief_kernel_density)
+    plt.show()
+
+def plot_kurtosis(belief_evolution):
+    plt.xscale("log")
+    plt.plot(get_kurtosis(belief_evolution))
+
+def plot_polarisation(belief_evolution):
+    plt.xscale("log")
+    plt.plot(get_polarisation(belief_evolution))
+
 
     
 

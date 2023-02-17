@@ -1,4 +1,5 @@
 from math import sqrt, pi, exp
+import numpy as np
 
 def multiply_gaussians(a,b):
     mean_a, sigma_a = a
@@ -70,10 +71,22 @@ def filtered_gaussian_multiplication_explicit_update(gaussian, gaussian_to_filte
 
     h = p_star * (delta_mu/(1+delta_var))
 
-    k = p_star * (1 / (1 + delta_var)) * ((1 - p_star) * ((delta_mu**2)/(1+delta_var)) - sd_1**2)
-
     new_mu = mu_1 + h
-    new_sd = sqrt(sd_1**2 + k)
 
-    return (new_mu, new_sd)
+    if update_variance:
+        k = p_star * (1 / (1 + delta_var)) * ((1 - p_star) * ((delta_mu**2)/(1+delta_var)) - sd_1**2)
+        new_sd = sqrt(sd_1**2 + k)
+        return (new_mu, new_sd)
+    
+    return (new_mu, sd_1)
+
+
+
+def polarisation(beliefs):
+    n = len(beliefs)
+    centered_beliefs = beliefs - sum(beliefs/n)
+    polarisation = np.matmul(centered_beliefs.T, centered_beliefs)
+    return polarisation
+
+    
     

@@ -1,4 +1,5 @@
 from utils.computations.analytical import *
+from utils.computations.test.gaussian import *
 
 class UpdateRule:
     def __init__(self, bias_strength=0, trust=1, rewire_probability=0, trust_bound=1, 
@@ -16,7 +17,7 @@ class UpdateRule:
         self.test = test
 
     def testing(self, belief, input, belief_uncertainty0, input_uncertainty0):
-        return filtered_gaussian_multiplication_explicit_update(belief, input, self.trust)
+        return multiply_gaussian_filtered_by_prior(belief, input, self.bias_strength)
 
     def belief_update(self, belief, input, belief_uncertainty0, input_uncertainty0):
 
@@ -31,7 +32,7 @@ class UpdateRule:
                 if self.evolving_uncertainty == True:
                     new_belief = filtered_gaussian_multiplication_explicit_update(belief, filtered_input, self.trust)
                 else:
-                    new_belief = filtered_gaussian_multiplication_unshared(belief, filtered_input, self.trust)
+                    new_belief = filtered_gaussian_multiplication_explicit_update(belief, filtered_input, self.trust, update_variance=False)
             
             case "filter_belief":
                 filtered_belief = filtered_gaussian_multiplication_explicit_update(belief, belief, self.bias_strength)
@@ -41,9 +42,6 @@ class UpdateRule:
                     new_belief = filtered_gaussian_multiplication_explicit_update(filtered_belief, update_input, self.trust, update_variance=False)
 
         return new_belief
-
-  
-
 
 
     def get_update_input(self, belief, input, belief_uncertainty0, input_uncertainty0):
@@ -62,9 +60,3 @@ class UpdateRule:
         
         input = (input_mean, input_uncertainty)
         return input
-
-
-
-
-
-
