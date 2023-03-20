@@ -1,0 +1,72 @@
+from computations.probabilistic.vectorised import *
+from matplotlib import pyplot as plt
+import numpy as np
+from scipy.stats import norm
+
+
+def plot_gaussian(gaussian, color='b'):
+    x = np.linspace(-2, 2, 200)
+    plt.plot(x, norm.pdf(x, gaussian[0], gaussian[1]), color=color)
+
+def plot_distribution(distribution, type, color, label):
+    plt.plot(steps, distribution, type, label =label, color = color)
+
+def plot_updating_overview_filtered_likelihood(prior, filter, filtered_likelihood, likelihood, posterior):
+    plt.figure(1, [20, 20])
+    plt.subplot(331)
+    plot_distribution(prior, "-", label="Agent's prior belief", color = "#8b008b")
+    plot_distribution(filter, "--", label="Bias filter (efficiency 0.5)", color = "#8b008b")
+    plt.xlim([-1,1])
+    plt.ylim([0,3])
+    plt.ylabel("Density of Probability")
+    plt.xlabel(r"$\theta$")
+    plt.legend(loc="upper right")
+    plt.subplot(332)
+    plot_distribution(likelihood, "-", label ="Likelihood", color = "b")
+    plot_distribution(filtered_likelihood, "--", label="Filtered likelihood", color = "g")
+    plot_distribution(filter, "--", label="Bias filter (efficiency 0.5)", color = "#8b008b")
+    plt.xlim([-1,1])
+    plt.ylim([0,3])
+    plt.ylabel("Density of Probability")
+    plt.xlabel(r"$\theta$")
+    plt.legend(loc="upper right")
+    plt.subplot(333)
+    plot_distribution(prior, "-", label="Agent's prior belief", color = "#8b008b")
+    plot_distribution(posterior, "-", label ="Agent's Posterior Belief", color = "r")
+    plot_distribution(filtered_likelihood, "--", label="Filtered likelihood", color = "g")
+    plt.xlim([-1,1])
+    plt.ylim([0,3])
+    plt.ylabel("Density of Probability")
+    plt.xlabel(r"$\theta$")
+    plt.legend(loc="upper right")
+    plt.show()
+
+def plot_updating_overview_filtered_prior(prior, filter, filtered_prior, likelihood, posterior):
+    plt.figure(1, [20, 20])
+    plt.subplot(331)
+    plot_distribution(prior, "-", label="Agent's prior belief", color = "#8b008b")
+    plot_distribution(filter, "--", label="Bias filter (efficiency 0.5)", color = "#8b008b")
+    plt.ylim([0,3])
+    plt.xlim([-1,1])
+    plt.ylabel("Density of Probability")
+    plt.xlabel(r"$\theta$")
+    plt.legend(loc="upper right")
+    plt.subplot(332)
+    plot_distribution(prior, "-", label ="Agent's prior belief", color = "#8b008b")
+    plot_distribution(filtered_prior, "--", label="Filtered prior", color = "g")
+    plot_distribution(filter, "--", label="Bias filter (efficiency 0.5)", color = "#8b008b")
+    plt.ylim([0,3])
+    plt.xlim([-1,1])
+    plt.ylabel("Density of Probability")
+    plt.xlabel(r"$\theta$")
+    plt.legend(loc="upper right")
+    plt.subplot(333)
+    plot_distribution(filtered_prior, "--", label="Filtered prior", color = "g")
+    plot_distribution(posterior, "-", label ="Agent's Posterior Belief", color = "r")
+    plot_distribution(likelihood, "-", label="Likelihood", color = "b")
+    plt.ylim([0,3])
+    plt.xlim([-1,1])
+    plt.ylabel("Density of Probability")
+    plt.xlabel(r"$\theta$")
+    plt.legend(loc="upper right")
+    plt.show()
