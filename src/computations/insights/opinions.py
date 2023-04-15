@@ -127,7 +127,7 @@ def convergence_times_evaluation(evaluation_biases, agent_network, interactions,
             computation_times.append(simulation.insights.convergence_time)
         all_times.append(computation_times)
     return all_times
-
+    
 
 def mse_assimilation_uncertainty(assimilation_biases, initial_uncertainties, agent_network, simulation, interactions, repetitions=1):
     uncertainties_num = len(initial_uncertainties)

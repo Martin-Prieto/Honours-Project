@@ -7,7 +7,7 @@ class IterativeAgent(Agent):
         
     def initialise(self):
         self.belief = iterative_gaussian((self.initial_mean, self.initial_uncertainty))
-        self.belief = iterative_gaussian((self.initial_mean, self.initial_uncertainty))
+        self.belief_old = iterative_gaussian((self.initial_mean, self.initial_uncertainty))
         self.tolerance = 6*self.initial_uncertainty
 
     def get_belief_mean(self):

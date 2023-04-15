@@ -5,8 +5,6 @@ import numpy as np
 def netwrok_from_file(file_name):
         G = nx.Graph()
         with open(file_name) as f:
-            next(f)  # Skip the first line
-            next(f)  # Skip the second line
             for line in f:
                 u, v = map(int, line.strip().split()[:2])
                 G.add_edge(u, v)

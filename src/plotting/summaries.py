@@ -6,14 +6,19 @@ from scipy.stats import norm
 import seaborn as sns
 from computations.probabilistic.vectorised import vector_gaussian, steps, normalize
 import warnings
+import pandas as pd
 
 plt.style.use('ggplot')
 
-def plot_number_of_opinions_evaluation_uncertainty(heat_map, evaluation_biases, initial_uncertainties):
-    ax = sns.heatmap(heat_map, xticklabels=initial_uncertainties, yticklabels=evaluation_biases, cmap="crest")
+def plot_number_of_opinions_evaluation_uncertainty(heat_map, evaluation_biases, initial_uncertainties, num_ticks=20):
+    yticks = np.linspace(0, len(evaluation_biases) - 1, num_ticks, dtype=np.int)
+    yticklabels = [evaluation_biases[idx] for idx in yticks]
+    ax = sns.heatmap(heat_map, xticklabels=initial_uncertainties, yticklabels=yticklabels)
     ax.invert_yaxis()
+    ax.set_yticks(yticks)
     plt.xlabel(r'$\sigma_0$', fontsize = 15)
     plt.ylabel(r'$\delta$', fontsize = 15)
+    plt.show()
 
 def plot_number_of_opinions_tolerance_uncertainty(heat_map, tolerances, initial_uncertainties):
     ax = sns.heatmap(heat_map, xticklabels=initial_uncertainties, yticklabels=tolerances)
@@ -159,58 +164,69 @@ def plot_varying_source_uncertainty(belief_evolutions, source_uncertainties):
         ax.label_outer()
     fig.show()
 
-def diversity_densities(df):
+def diversity_densities(df, parameter, xlim=None, bw_adjust=.5, red=False, ylabel="Density p"):
     sns.set_theme(style="white", rc={"axes.facecolor": (0, 0, 0, 0)})
+        # Initialize the FacetGrid object
+    if red:
+        pal = sns.cubehelix_palette(len(pd.unique(df[parameter])),start=1.2, rot=-.25, light=.7,dark=.4)
+    else:
+        pal = sns.cubehelix_palette(len(pd.unique(df[parameter])), rot=-.25, light=.7)
+    g = sns.FacetGrid(df, row=parameter, hue=parameter, aspect=15, height=.5, palette=pal, sharey=False, xlim=xlim)
 
-    # Initialize the FacetGrid object
-    pal = sns.cubehelix_palette(10, rot=-.25, light=.7)
-    g = sns.FacetGrid(df, row="Density", hue="Density", aspect=15, height=.5, palette=pal)
+        # Draw the densities in a few steps
+    g.map(sns.kdeplot,  "Diversity",
+        bw_adjust=bw_adjust, clip_on=False,
+        fill=True, alpha=1, linewidth=0.15)
+    g.map(sns.kdeplot, "Diversity", clip_on=False, color="w", lw=2, bw_adjust=bw_adjust)
 
-    # Draw the densities in a few steps
-    g.map(sns.kdeplot, "Diversity",
-      bw_adjust=.5, clip_on=False,
-      fill=True, alpha=1, linewidth=1.5)
-    g.map(sns.kdeplot, "Diversity", clip_on=False, color="w", lw=2, bw_adjust=.5)
-
-    # passing color=None to refline() uses the hue mapping
+        # passing color=None to refline() uses the hue mapping
     g.refline(y=0, linewidth=2, linestyle="-", color=None, clip_on=False)
 
 
     g.map(label, "Diversity")
 
-    # Set the subplots to overlap
+        # Set the subplots to overlap
     g.figure.subplots_adjust(hspace=-.25)
-
-    # Remove axes details that don't play well with overlap
+        # Remove axes details that don't play well with overlap
     g.set_titles("")
     g.set(yticks=[], ylabel="")
+    g.fig.text(0.095, 0.5, ylabel, va='center', rotation='vertical')
     g.despine(bottom=True, left=True)
 
-def disagreement_densities(df):
+   
+def label(x, color, label):
+    ax = plt.gca()
+    ax.text(0, .2, label, fontweight="bold", color=color,
+            ha="left", va="center", transform=ax.transAxes)
+    
+
+def disagreement_densities(df, parameter, xlim=None, bw_adjust=.5, red=False, ylabel="Density p"):
     sns.set_theme(style="white", rc={"axes.facecolor": (0, 0, 0, 0)})
+        # Initialize the FacetGrid object
+    if red:
+        pal = sns.cubehelix_palette(len(pd.unique(df[parameter])),start=1.2, rot=-.25, light=.7,dark=.4)
+    else:
+        pal = sns.cubehelix_palette(len(pd.unique(df[parameter])), rot=-.25, light=.7)
+    g = sns.FacetGrid(df, row=parameter, hue=parameter, aspect=15, height=.5, palette=pal, sharey=False, xlim=xlim)
 
-    # Initialize the FacetGrid object
-    pal = sns.cubehelix_palette(10, rot=-.25, light=.7)
-    g = sns.FacetGrid(df, row="Density", hue="Density", aspect=15, height=.5, palette=pal)
+        # Draw the densities in a few steps
+    g.map(sns.kdeplot,  "Disagreement",
+        bw_adjust=bw_adjust, clip_on=False,
+        fill=True, alpha=1, linewidth=0.15)
+    g.map(sns.kdeplot, "Disagreement", clip_on=False, color="w", lw=2, bw_adjust=bw_adjust)
 
-    # Draw the densities in a few steps
-    g.map(sns.kdeplot, "Disagreement",
-      bw_adjust=.5, clip_on=False,
-      fill=True, alpha=1, linewidth=1.5)
-    g.map(sns.kdeplot, "Disagreement", clip_on=False, color="w", lw=2, bw_adjust=.5)
-
-    # passing color=None to refline() uses the hue mapping
+        # passing color=None to refline() uses the hue mapping
     g.refline(y=0, linewidth=2, linestyle="-", color=None, clip_on=False)
 
 
     g.map(label, "Disagreement")
 
-    # Set the subplots to overlap
+        # Set the subplots to overlap
     g.figure.subplots_adjust(hspace=-.25)
-
-    # Remove axes details that don't play well with overlap
+        # Remove axes details that don't play well with overlap
     g.set_titles("")
     g.set(yticks=[], ylabel="")
+    g.fig.text(0.095, 0.5, ylabel, va='center', rotation='vertical')
     g.despine(bottom=True, left=True)
 
    

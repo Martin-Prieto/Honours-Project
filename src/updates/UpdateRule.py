@@ -54,14 +54,3 @@ class UpdateRule:
                 input = observation
                 operation = UpdateRule.analytical_operation
         return input, operation
-
-    # def get_signal_quality(self, belief, signal, trust):
-    #     warnings.filterwarnings("error")
-    #     distance = abs(belief[0]-signal)
-    #     try:
-    #         signal_uncertainty = trust*(1-(1/((1/1.8**self.evaluation)*(2**self.evaluation)))+1/((1/1.8**self.evaluation)*((2-distance)**self.evaluation)))
-    #     except:
-    #         signal_uncertainty =  float('inf')
-
-    #     warnings.resetwarnings()
-    #     return signal_uncertainty
